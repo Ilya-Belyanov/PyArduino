@@ -23,6 +23,12 @@ class PortWindow(QtWidgets.QMainWindow):
         self.ui.progressBar.setValue(0)
         self.ui.OK.clicked.connect(self.OK)
         self.ui.Cancel.clicked.connect(lambda: self.close())
+        self.loadStyleSheets()
+
+    def loadStyleSheets(self):
+        style = "static/style/style.css"
+        with open(style, "r") as f:
+            self.setStyleSheet(f.read())
 
     def connect(self):
         try:
@@ -39,6 +45,5 @@ class PortWindow(QtWidgets.QMainWindow):
             time.sleep(1/100)
 
     def OK(self):
-        self.parent.analyzer.setPort(self.selectPort)
-        self.parent.commander.setPort(self.selectPort)
+        self.parent.setPort(self.selectPort)
         self.close()

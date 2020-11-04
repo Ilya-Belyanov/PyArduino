@@ -5,6 +5,7 @@ from data.command import Command
 class Analyzer:
     DISTANCE = True
     LINE = True
+    LIGHT = True
     TEMPERATURE = True
 
     def __init__(self, parent):
@@ -17,15 +18,19 @@ class Analyzer:
 
     def boolDistance(self):
         self.DISTANCE = not self.DISTANCE
-        self.parent.writeDistance(0)
+        return self.DISTANCE
 
     def boolLine(self):
         self.LINE = not self.LINE
-        self.parent.writeLine(0, " ")
+        return self.LINE
 
-    def boolTemp(self):
+    def boolLight(self):
+        self.LIGHT = not self.LIGHT
+        return self.LIGHT
+
+    def boolTemperature(self):
         self.TEMPERATURE = not self.TEMPERATURE
-        self.parent.writeTemperature(0)
+        return self.TEMPERATURE
 
     def readDistance(self):
         if self.DISTANCE:
@@ -36,6 +41,10 @@ class Analyzer:
             line = self.adapter.readInt(Command.LINE_SENSOR_READ)
             color = "LIGHT" if line < 800 else "BLACK"
             self.parent.writeLine(line, color)
+
+    def readLight(self):
+        if self.LIGHT:
+            self.parent.writeLight(self.adapter.readInt(Command.LIGHT_SENSOR_READ))
 
     def readTemperature(self):
         if self.TEMPERATURE:
