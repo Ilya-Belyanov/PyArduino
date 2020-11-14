@@ -9,4 +9,7 @@ class Command:
     G = "g"
     B = "b"
 
+    LASER_HIGH = b'z1\n'
+    LASER_LOW = b'z0\n'
+
 
