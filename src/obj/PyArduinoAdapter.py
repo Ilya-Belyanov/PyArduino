@@ -3,6 +3,10 @@ class PyArdAdapter:
     def __init__(self, port=None):
         self.port = port
 
+    def closePort(self):
+        if self.port:
+            self.port.close()
+
     def do(self, command):
         if self.port:
             self.port.write(command)

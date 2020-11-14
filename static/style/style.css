@@ -183,3 +183,12 @@ QLabel {
 QInputDialog {
   background-color: #31363b;
  }
+ 
+ QProgressBar
+ {
+	 border: 1px solid gray;
+	border-radius: 3px;
+	background: white;
+	padding: 1px;
+	color: white;
+ }
