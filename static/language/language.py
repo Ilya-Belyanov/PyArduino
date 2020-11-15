@@ -35,17 +35,22 @@ class Language:
 
 
 class WordsEng:
-    TITLE = "Title"
+    TITLE = "Cupy"
 
     ON = 'on'
     OFF = 'off'
     CLEAR = 'clear'
 
-    SETTINGS = "Settings"
+    PORT = "Port"
+    PARAMETERS_PORT = "Parameters port"
     CONNECT_PORT = "Connect port"
+    CLOSE_PORT = "Close port"
+
+    SETTINGS = "Settings"
     LANGUAGE = "Language"
     RU = "Ru"
     ENG = "Eng"
+    STYLES = "Styles"
 
     DISTANT_SENSOR = "Distant sensor"
     LINE_SENSOR = "Line sensor"
@@ -66,17 +71,22 @@ class WordsEng:
 
 
 class WordsRu:
-    TITLE = "Название"
+    TITLE = "Купай"
 
     ON = 'вкл'
     OFF = 'выкл'
     CLEAR = 'Погасить'
 
-    SETTINGS = "Настройки"
+    PORT = "Порт"
+    PARAMETERS_PORT = "Параметры порта"
     CONNECT_PORT = "Подключить порт"
+    CLOSE_PORT = "Закрыть порт"
+
+    SETTINGS = "Настройки"
     LANGUAGE = "Язык"
     RU = "Ру"
-    ENG = "Инг"
+    ENG = "Анг"
+    STYLES = "Стили"
 
     DISTANT_SENSOR = "Датчик дистанции"
     LINE_SENSOR = "Датчик линии"

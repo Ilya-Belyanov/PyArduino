@@ -284,9 +284,18 @@
      <addaction name="actionRu_2"/>
      <addaction name="actionEng"/>
     </widget>
-    <addaction name="actionConnect_port"/>
     <addaction name="menuLanguages"/>
+    <addaction name="actionStyles"/>
    </widget>
+   <widget class="QMenu" name="menuPort">
+    <property name="title">
+     <string>Port</string>
+    </property>
+    <addaction name="actionParameters_port"/>
+    <addaction name="actionConnect_port"/>
+    <addaction name="actionClose_port"/>
+   </widget>
+   <addaction name="menuPort"/>
    <addaction name="menuSettings"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -308,6 +317,21 @@
   <action name="actionEng">
    <property name="text">
     <string>Eng</string>
+   </property>
+  </action>
+  <action name="actionStyles">
+   <property name="text">
+    <string>Styles</string>
+   </property>
+  </action>
+  <action name="actionClose_port">
+   <property name="text">
+    <string>Close port</string>
+   </property>
+  </action>
+  <action name="actionParameters_port">
+   <property name="text">
+    <string>Parameters port</string>
    </property>
   </action>
  </widget>

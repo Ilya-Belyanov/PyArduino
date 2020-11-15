@@ -6,6 +6,7 @@ class PyArdAdapter:
     def closePort(self):
         if self.port:
             self.port.close()
+            self.port = None
 
     def do(self, command):
         if self.port:

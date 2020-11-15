@@ -1,5 +1,7 @@
 class Command:
     BEGIN = b"BEGIN\n"
+    END = b"END\n"
+
     DISTANT_SENSOR_READ = b"d\n"
     LINE_SENSOR_READ = b"l\n"
     LIGHT_SENSOR_READ = b"i\n"
@@ -11,5 +13,7 @@ class Command:
 
     LASER_HIGH = b'z1\n'
     LASER_LOW = b'z0\n'
+
+    LED_LOW = b's\n'
 
 

@@ -11,6 +11,7 @@
 
 //MODULES
 #define LASER 3
+#define LED_DISTANCE 4
 
 //RGB LED
 #define R 11
@@ -18,6 +19,7 @@
 #define B 9
 
 int colorR, colorG, colorB;
+int distance_value;
 
 Ultrasonic distant(SENSOR_DISTANT_ECHO, SENSOR_DISTANT_TRG);
 
@@ -37,6 +39,7 @@ void setup()
   temp_sensors.begin();
   
   pinMode(LASER, OUTPUT);
+  pinMode(LED_DISTANCE, OUTPUT);
   
   pinMode(R, OUTPUT);
   pinMode(G, OUTPUT);
@@ -58,7 +61,10 @@ void loop()
       Serial.println(analogRead(SENSOR_LINE));
 
     else if (command[0] == 'd')
-      Serial.println(distant.read());
+    { distance_value = distant.read();
+      distance_analysis(distance_value);
+      Serial.println(distance_value);
+    }
       
     else if (command[0] == 't')
     {
@@ -66,7 +72,6 @@ void loop()
       Serial.println(temp_sensors.getTempCByIndex(0)); 
     }
 
-    //Do command
     else if (command[0] == 'z')
     {
       if (command[1] == '0')
@@ -74,6 +79,8 @@ void loop()
       else
         digitalWrite(LASER, HIGH);
     }
+    else if (command[0] == 's')
+        digitalWrite(LED_DISTANCE, LOW);
       
     else if (command[0] == 'r')
     { 
@@ -90,7 +97,9 @@ void loop()
       colorB = command.substring(1, command.length() - 1).toInt();
       color(colorR, colorG, colorB); 
     }    
-        
+
+    else if (command[0] == 'E')
+      reload();
   }
 }
 
@@ -105,6 +114,13 @@ void checkCommand()
     }
 }
 
+void distance_analysis(int distance_value)
+{
+  if (distance_value > 10)
+    digitalWrite(LED_DISTANCE, LOW);
+  else
+    digitalWrite(LED_DISTANCE, HIGH);
+}
 
 void color(unsigned char red, unsigned char green, unsigned char blue)
 {
@@ -112,4 +128,11 @@ void color(unsigned char red, unsigned char green, unsigned char blue)
   analogWrite(G, green);
   analogWrite(B, blue);
   
+}
+
+void reload()
+{
+  color(0, 0, 0);
+  digitalWrite(LED_DISTANCE, LOW);
+  digitalWrite(LASER, LOW);
 }

@@ -22,7 +22,7 @@ class PortWindow(QtWidgets.QMainWindow):
         self.ui.connect.clicked.connect(self.connect)
         self.ui.progressBar.setValue(0)
         self.ui.OK.clicked.connect(self.OK)
-        self.ui.Cancel.clicked.connect(lambda: self.close())
+        self.ui.Cancel.clicked.connect(self.Cancel)
         self.loadStyleSheets()
         self.setLanguage()
 
@@ -52,4 +52,9 @@ class PortWindow(QtWidgets.QMainWindow):
     def OK(self):
         if self.selectPort:
             self.parent.setPort(self.selectPort)
+        self.close()
+
+    def Cancel(self):
+        if self.selectPort:
+            self.selectPort.close()
         self.close()

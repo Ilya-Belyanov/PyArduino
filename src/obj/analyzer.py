@@ -18,7 +18,8 @@ class Analyzer:
 
     def readDistance(self):
         if self.READ[Command.DISTANT_SENSOR_READ]:
-            self.parent.writeDistance(self.adapter.readInt(Command.DISTANT_SENSOR_READ))
+            distance = self.adapter.readInt(Command.DISTANT_SENSOR_READ)
+            self.parent.writeDistance(distance)
 
     def readLine(self):
         if self.READ[Command.LINE_SENSOR_READ]:

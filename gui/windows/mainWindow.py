@@ -1,5 +1,3 @@
-import time
-
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QBasicTimer
 
@@ -21,14 +19,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.language = Language()
 
-        self.analyzer = Analyzer(self)
         self.commander = Commander(self)
+        self.analyzer = Analyzer(self)
 
         self.portWindow = None
 
         self.ui.actionConnect_port.triggered.connect(self.showPortWindow)
         self.ui.actionRu_2.triggered.connect(self.language.setRu)
         self.ui.actionEng.triggered.connect(self.language.setEng)
+        self.ui.actionClose_port.triggered.connect(self.closePort)
 
         self.ui.bDistance.clicked.connect(lambda: self.changeBool(Command.DISTANT_SENSOR_READ, self.writeDistance))
         self.ui.bLine.clicked.connect(lambda: self.changeBool(Command.LINE_SENSOR_READ, self.writeLine))
@@ -52,7 +51,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.loadStyleSheets()
         self.setLanguage()
-        self.setStartWindow()
+        self.setStartWindowWithoutPort()
 
     def loadStyleSheets(self):
         style = "static/style/style.css"
@@ -62,11 +61,16 @@ class MainWindow(QtWidgets.QMainWindow):
     def setLanguage(self):
         self.setWindowTitle(self.language.words.TITLE)
 
-        self.ui.menuSettings.setTitle(self.language.words.SETTINGS)
+        self.ui.menuPort.setTitle(self.language.words.PORT)
+        self.ui.actionParameters_port.setText(self.language.words.PARAMETERS_PORT)
         self.ui.actionConnect_port.setText(self.language.words.CONNECT_PORT)
+        self.ui.actionClose_port.setText(self.language.words.CLOSE_PORT)
+
+        self.ui.menuSettings.setTitle(self.language.words.SETTINGS)
         self.ui.menuLanguages.setTitle(self.language.words.LANGUAGE)
         self.ui.actionRu_2.setText(self.language.words.RU)
         self.ui.actionEng.setText(self.language.words.ENG)
+        self.ui.actionStyles.setText(self.language.words.STYLES)
 
         self.ui.bDistance.setText(self.language.words.OFF)
         self.ui.groupBox.setTitle(self.language.words.DISTANT_SENSOR)
@@ -83,17 +87,29 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.bClear.setText(self.language.words.CLEAR)
 
         self.ui.groupBox_6.setTitle(self.language.words.LASER)
-        self.ui.bLaser.setText(self.language.words.ON)
 
     def setStartWindow(self):
         self.clearRGB()
+        self.writeDistance()
+        self.writeLine()
+        self.writeLight()
+        self.writeTemperature()
+        self.ui.bLaser.setText(self.language.words.ON)
+        self.commander.LASER = False
+
+    def setStartWindowWithoutPort(self):
+        self.setStartWindow()
         self.ui.bLaser.setEnabled(False)
+        self.timeStop()
+
+    def setStartWindowWithPort(self):
+        self.setStartWindow()
+        self.ui.bLaser.setEnabled(True)
+        self.timeStart()
 
     def clearRGB(self):
         self.ui.sR.setValue(0)
-        time.sleep(0.01)
         self.ui.sG.setValue(0)
-        time.sleep(0.01)
         self.ui.sB.setValue(0)
 
     def showPortWindow(self):
@@ -103,13 +119,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def setPort(self, port):
         self.analyzer.setPort(port)
         self.commander.setPort(port)
-        self.setStartWindow()
-        self.ui.bLaser.setEnabled(True)
+        self.setStartWindowWithPort()
 
     def closeEvent(self, event):
-        self.analyzer.adapter.closePort()
-        self.commander.adapter.closePort()
-
+        self.closePort()
         if self.portWindow:
             self.portWindow.close()
 
@@ -153,6 +166,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def writeDistance(self, distance: int = 0):
         self.ui.lcdDistance.display(distance)
+        if not self.analyzer.READ[Command.DISTANT_SENSOR_READ]:
+            self.commander.ledLow()
 
     def writeLine(self, var: int = 0, color: str = " "):
         self.ui.lcdLine.display(var)
@@ -163,6 +178,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def writeTemperature(self, temp: float = 0.0):
         self.ui.lcdTemperature.display(temp)
+
+    def closePort(self):
+        self.setStartWindowWithoutPort()
+        self.commander.closePort()
+        self.analyzer.adapter.closePort()
+
 
 
 
