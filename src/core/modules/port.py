@@ -2,6 +2,16 @@ import sys
 import glob
 import serial
 
+std_speeds = ['1843200', '921600', '460800', '230400', '115200', '57600', '38400', '19200', '9600', '4800', '2400', '1200', '600', '300', '150', '100', '75', '50'] #Скорость COM порта
+paritys = ['N', 'E', 'O']   #Бит четности
+stopbitss = [1, 2]             #Количество стоп-бит
+bite_size = 8               #Биты данных
+t_out = 1                   #Таймаут в секундах, должен быть больше 1с
+flag1=0                     #Флаг для остановки программы, устанавливается в 1, если найдена сигнатура
+reading_bytes = 10          #Количество байт для чтения после открытия порта
+keyword=b'\x00\x00\x00'     #!Сигнатура для поиска
+cmd = b'\x00\x34\x65'       #!Команда перед началом приема
+ser = serial.Serial()
 
 def serial_ports():
     if sys.platform.startswith('win'):
@@ -24,8 +34,8 @@ def serial_ports():
             pass
     return result
 
-'''
-def parametersPort():
+
+def parametersPort(ser):
     try:
         for stop_bit in stopbitss:
             for parit in paritys:
@@ -74,5 +84,5 @@ def parametersPort():
     except serial.SerialException:
         print('Ошибка при открытии порта ' + ser.port)
         sys.exit()
-'''
+
 

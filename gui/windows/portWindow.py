@@ -6,6 +6,7 @@ from PyQt5 import QtWidgets
 from gui.ui.ui_generated.portWindow import Ui_MainWindow
 from src.core.modules.port import serial_ports
 from data.parameters import AVAILABLE_SPEED
+from data.parameters import TIME_CONNECT
 
 
 class PortWindow(QtWidgets.QMainWindow):
@@ -45,9 +46,11 @@ class PortWindow(QtWidgets.QMainWindow):
             print(e)
 
     def runBar(self):
+        self.ui.OK.setEnabled(False)
         for i in range(100):
             self.ui.progressBar.setValue(i + 1)
-            time.sleep(1/100)
+            time.sleep(TIME_CONNECT/100)
+        self.ui.OK.setEnabled(True)
 
     def OK(self):
         if self.selectPort:
