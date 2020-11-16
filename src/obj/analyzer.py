@@ -1,5 +1,5 @@
-from src.obj.PyArduinoAdapter import PyArdAdapter
 from data.command import Command
+from src.obj.PyArduinoAdapter import PyArdAdapter
 
 
 class Analyzer:

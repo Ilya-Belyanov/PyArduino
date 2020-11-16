@@ -7,10 +7,10 @@ from data.command import Command
 def timeFreeze(func):
     def wrapper(cls, *args):
         if cls.adapter.port:
-            cls.parent.timeStop()
+            cls.window.timeStop()
             func(cls, *args)
             time.sleep(0.001)
-            cls.parent.timeStart()
+            cls.window.timeStart()
 
     return wrapper
 
@@ -19,8 +19,8 @@ class Commander:
     RGB = {Command.R: 0, Command.G: 0, Command.B: 0}
     LASER = None
 
-    def __init__(self, parent=None):
-        self.parent = parent
+    def __init__(self, window=None):
+        self.window = window
         self.adapter = PyArdAdapter()
 
     def setPort(self, port):

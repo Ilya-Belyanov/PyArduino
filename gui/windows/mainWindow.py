@@ -1,13 +1,13 @@
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QBasicTimer
+from PyQt5.QtWidgets import QMessageBox
 
-from ..ui.ui_generated.MainWindow import Ui_MainWindow
-from .portWindow import PortWindow
-from src.obj.analyzer import Analyzer
-from src.obj.commander import Commander
-from data.parameters import FPS, FPS_TEMP
 from data.command import Command
+from .portWindow import PortWindow
+from src.obj.mainLogic import MainLogic
+from data.parameters import FPS, FPS_TEMP
 from static.language.language import Language
+from ..ui.ui_generated.MainWindow import Ui_MainWindow
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -17,33 +17,32 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
+        self.logic = MainLogic(self, self.ui)
+
         self.language = Language()
-
-        self.commander = Commander(self)
-        self.analyzer = Analyzer(self)
-
         self.portWindow = None
 
         self.ui.actionConnect_port.triggered.connect(self.showPortWindow)
         self.ui.actionRu_2.triggered.connect(self.language.setRu)
         self.ui.actionEng.triggered.connect(self.language.setEng)
-        self.ui.actionClose_port.triggered.connect(self.closePort)
+        self.ui.actionClose_port.triggered.connect(self.logic.closePort)
+        self.ui.actionParameters_port.triggered.connect(lambda: QMessageBox.about(self, "Title", "Message"))
 
-        self.ui.bDistance.clicked.connect(lambda: self.changeBool(Command.DISTANT_SENSOR_READ, self.writeDistance))
-        self.ui.bLine.clicked.connect(lambda: self.changeBool(Command.LINE_SENSOR_READ, self.writeLine))
+        self.ui.bDistance.clicked.connect(lambda: self.logic.changeBool(Command.DISTANT_SENSOR_READ, self.writeDistance))
+        self.ui.bLine.clicked.connect(lambda: self.logic.changeBool(Command.LINE_SENSOR_READ, self.writeLine))
         self.ui.bTemperature.clicked.connect(lambda:
-                                             self.changeBool(Command.TEMP_SENSOR_READ, self.writeTemperature))
-        self.ui.bLight.clicked.connect(lambda: self.changeBool(Command.LIGHT_SENSOR_READ, self.writeLight))
+                                             self.logic.changeBool(Command.TEMP_SENSOR_READ, self.writeTemperature))
+        self.ui.bLight.clicked.connect(lambda: self.logic.changeBool(Command.LIGHT_SENSOR_READ, self.writeLight))
 
-        self.ui.bLaser.clicked.connect(self.checkLaser)
-        self.ui.bClear.clicked.connect(self.clearRGB)
+        self.ui.bLaser.clicked.connect(self.logic.checkLaser)
+        self.ui.bClear.clicked.connect(self.logic.clearRGB)
 
         self.ui.sR.setRange(0, 255)
-        self.ui.sR.valueChanged[int].connect(lambda r: self.changeColor(Command.R, r))
+        self.ui.sR.valueChanged[int].connect(lambda r: self.logic.changeColor(Command.R, r))
         self.ui.sG.setRange(0, 255)
-        self.ui.sG.valueChanged[int].connect(lambda g: self.changeColor(Command.G, g))
+        self.ui.sG.valueChanged[int].connect(lambda g: self.logic.changeColor(Command.G, g))
         self.ui.sB.setRange(0, 255)
-        self.ui.sB.valueChanged[int].connect(lambda b: self.changeColor(Command.B, b))
+        self.ui.sB.valueChanged[int].connect(lambda b: self.logic.changeColor(Command.B, b))
 
         self.timer = QBasicTimer()
         self.timerTemp = QBasicTimer()
@@ -51,7 +50,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.loadStyleSheets()
         self.setLanguage()
-        self.setStartWindowWithoutPort()
+
+        self.logic.setStartWindowWithoutPort()
 
     def loadStyleSheets(self):
         style = "static/style/style.css"
@@ -88,52 +88,23 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.ui.groupBox_6.setTitle(self.language.words.LASER)
 
-    def setStartWindow(self):
-        self.clearRGB()
-        self.writeDistance()
-        self.writeLine()
-        self.writeLight()
-        self.writeTemperature()
-        self.ui.bLaser.setText(self.language.words.ON)
-        self.commander.LASER = False
-
-    def setStartWindowWithoutPort(self):
-        self.setStartWindow()
-        self.ui.bLaser.setEnabled(False)
-        self.timeStop()
-
-    def setStartWindowWithPort(self):
-        self.setStartWindow()
-        self.ui.bLaser.setEnabled(True)
-        self.timeStart()
-
-    def clearRGB(self):
-        self.ui.sR.setValue(0)
-        self.ui.sG.setValue(0)
-        self.ui.sB.setValue(0)
-
     def showPortWindow(self):
         self.portWindow = PortWindow(self)
         self.portWindow.show()
 
-    def setPort(self, port):
-        self.analyzer.setPort(port)
-        self.commander.setPort(port)
-        self.setStartWindowWithPort()
-
     def closeEvent(self, event):
-        self.closePort()
+        self.logic.closePort()
         if self.portWindow:
             self.portWindow.close()
 
     def timerEvent(self, event):
         if event.timerId() == self.timer.timerId():
-            self.analyzer.readDistance()
-            self.analyzer.readLine()
-            self.analyzer.readLight()
+            self.logic.analyzer.readDistance()
+            self.logic.analyzer.readLine()
+            self.logic.analyzer.readLight()
 
         if event.timerId() == self.timerTemp.timerId():
-            self.analyzer.readTemperature()
+            self.logic.analyzer.readTemperature()
 
     def timeStop(self):
         self.timer.stop()
@@ -142,54 +113,3 @@ class MainWindow(QtWidgets.QMainWindow):
     def timeStart(self):
         self.timer.start(int(1000 / FPS), self)
         self.timerTemp.start(int(1000 / FPS_TEMP), self)
-
-    def checkLaser(self):
-        self.commander.writeLaser()
-        if self.commander.LASER:
-            self.sender().setText(self.language.words.OFF)
-        else:
-            self.sender().setText(self.language.words.ON)
-
-    def changeColor(self, command, color):
-        self.commander.changeColor(command, color)
-        self.ui.lR.setText(str(self.ui.sR.value()))
-        self.ui.lG.setText(str(self.ui.sG.value()))
-        self.ui.lB.setText(str(self.ui.sB.value()))
-
-    def changeBool(self, command, setStart):
-        self.analyzer.READ[command] = not self.analyzer.READ[command]
-        if self.analyzer.READ[command]:
-            self.sender().setText(self.language.words.OFF)
-        else:
-            self.sender().setText(self.language.words.ON)
-        setStart()
-
-    def writeDistance(self, distance: int = 0):
-        self.ui.lcdDistance.display(distance)
-        if not self.analyzer.READ[Command.DISTANT_SENSOR_READ]:
-            self.commander.ledLow()
-
-    def writeLine(self, var: int = 0, color: str = " "):
-        self.ui.lcdLine.display(var)
-        self.ui.lLine.setText(color)
-
-    def writeLight(self, light: int = 0):
-        self.ui.lcdLight.display(light)
-
-    def writeTemperature(self, temp: float = 0.0):
-        self.ui.lcdTemperature.display(temp)
-
-    def closePort(self):
-        self.setStartWindowWithoutPort()
-        self.commander.closePort()
-        self.analyzer.adapter.closePort()
-
-
-
-
-
-
-
-
-
-
