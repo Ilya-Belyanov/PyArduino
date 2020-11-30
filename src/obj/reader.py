@@ -2,13 +2,14 @@ from data.command import Command
 from src.obj.PyArduinoAdapter import PyArdAdapter
 
 
-class Analyzer:
+class Reader:
     READ = {Command.DISTANT_SENSOR_READ: True,
             Command.LINE_SENSOR_READ: True,
             Command.LIGHT_SENSOR_READ: True,
             Command.TEMP_SENSOR_READ: True}
 
-    def __init__(self, parent):
+    def __init__(self, parent, window):
+        self.window = window
         self.parent = parent
         self.adapter = PyArdAdapter()
 
@@ -24,7 +25,7 @@ class Analyzer:
     def readLine(self):
         if self.READ[Command.LINE_SENSOR_READ]:
             line = self.adapter.readInt(Command.LINE_SENSOR_READ)
-            color = self.parent.language.words.LIGHT if line < 800 else self.parent.language.words.BLACK
+            color = self.window.language.words.LIGHT if line < 800 else self.window.language.words.BLACK
             self.parent.writeLine(line, color)
 
     def readLight(self):

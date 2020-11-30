@@ -1,0 +1,211 @@
+
+QMainWindow {
+  background-color: #31363b; }
+
+QMenuBar {
+    background-color: qlineargradient(x1:0, y1:0.5, x2:1, y2:0.5,
+                                      stop:0 rgb(255,255,255), stop:1 #31363b);
+    spacing: 3px; /* spacing between menu bar items */
+}
+
+QMenuBar::item {
+    padding: 1px 4px;
+    background: #1d1f21;
+	border-color: rgb(255,255,255);
+	color: white;
+    border-radius: 4px;
+}
+
+QMenuBar::item:selected {
+    background: rgb(255,255,255);
+	color: #1d1f21;
+
+}
+
+QMenuBar::item:pressed {
+    background: rgb(255,255,255);
+	color: #1d1f21;
+}
+
+QMenu {
+	color: white;
+    background-color: #31363b;
+    border: 1px solid black;
+}
+
+QMenu::item:selected {
+    background-color: rgb(255,255,255);
+	color: #1d1f21;
+}
+
+QMenu::item:pressed {
+    background: rgb(255,255,255);
+	color: #1d1f21;
+}
+
+QTabWidget::pane {
+    border-top: 2px solid #31363b;
+}
+
+QTabWidget::tab-bar {
+    left: 5px;
+}
+
+QTabBar::tab {
+    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
+                                stop: 0 rgb(255,255,255), stop: 0.4 #1d1f21,
+                                stop: 0.5 #1d1f21, stop: 1.0 rgb(255,255,255));
+    border: 2px solid rgb(126,7,169);
+    border-bottom-color: rgb(126,7,169);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    min-width: 20ex;
+    padding: 2px;
+	color: white;
+	font: bold 9pt;
+}
+
+QTabBar::tab:selected {
+   color: rgb(255,214,1);
+}
+
+QTabBar::tab:!selected {
+    margin-top: 2px;
+}
+
+QComboBox {
+    border: 1px solid gray;
+    border-radius: 3px;
+    padding: 1px 10px 1px 3px;
+    min-width: 3em;
+}
+
+QGroupBox {
+  background-color: #31363b;
+  color: rgb(255,255,255);
+  font: 10pt "Yu Gothic Medium";
+}
+
+QTreeView {
+    background-color: #31363b;
+}
+
+
+QScrollBar:vertical {
+    border: 1px solid gray;
+    background: #1d1f21;
+    width: 20px;
+ }
+QScrollBar::sub-page:vertical {
+    background: qlineargradient(x1:0.5, y1:0, x2:0.5, y2:1, stop:0 #1d1f21, stop:1 rgb(255,255,255));
+ }
+
+QPushButton {
+  border-radius: 10px;
+  border-style: outset;
+  border-width: 2px;
+  border-color: gray;
+  background-color: #1d1f21;
+  color: rgb(255,255,255);
+  font: 15px;
+  font-family:"Yu Gothic Medium";
+  min-width: 5em;
+  padding: 6px;
+	 }
+QPushButton:disabled {
+    background-color:#31363b;
+  color: gray;
+  border-color: gray;
+}
+
+QPushButton:hover {
+  border-style: outset;
+  border-width: 4px;
+  border-width: 4px;
+  border-color: rgb(255,255,255);
+  color: rgb(255,255,255); }
+
+QPushButton:pressed {
+  background-color: rgb(255,255,255);
+  color: #1d1f21;
+  border-color: #1d1f21;
+  border-style: inset; }
+
+
+QSlider::handle:horizontal{
+  background: rgb(255,214,1);
+  border: 2px solid  rgb(255,214,1);
+  width: 10px;
+  margin: -30px 0;
+
+}
+
+QSlider::groove:horizontal{
+  border: none;
+  height: 3px;
+}
+
+
+QSlider::sub-page:horizontal{
+  background: qlineargradient(x1:0, y1:0.5, x2:1, y2:0.5, stop:0 #1d1f21, stop:1 rgb(255,255,255));
+
+}
+QSlider::add-page:horizontal{
+  background: white;
+
+}
+
+QSlider::groove:vertical {
+    border: none;
+    width: 10px;
+}
+
+QSlider::handle:vertical {
+    background: rgb(255,255,255);
+    border: 2px solid  rgb(255,255,255);
+    height: 10px;
+    margin: 0 -6px;
+}
+
+QSlider::add-page:vertical {
+    background: qlineargradient(x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgb(255,255,255), stop:1 #1d1f21);
+}
+
+QSlider::sub-page:vertical {
+    background: #1d1f21;
+}
+
+QLabel {
+  qproperty-alignment:AlignCenter;
+  color: white;
+  font: bold 14px;
+  font-family:"Lucida Console";
+
+   }
+
+
+QInputDialog {
+  background-color: #31363b;
+ }
+
+ QProgressBar
+ {
+	 border: 1px solid gray;
+	border-radius: 3px;
+	background: #1d1f21;
+	padding: 1px;
+	color: white;
+     font: bold 14px;
+     qproperty-alignment:AlignCenter;
+ }
+
+QProgressBar::chunk:horizontal {
+    background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 0.5, stop: 0 #1d1f21, stop: 1 rgb(255,255,255));
+}
+QMessageBox{
+    background:#1d1f21;
+}
+
+QMessageBox QLabel {
+    qproperty-alignment:AlignLeft;
+}

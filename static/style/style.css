@@ -195,6 +195,13 @@ QInputDialog {
      qproperty-alignment:AlignCenter;
  }
 
- QProgressBar::chunk:horizontal {
-background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 0.5, stop: 0 rgb(126,7,169), stop: 1 rgb(255,214,1));
+QProgressBar::chunk:horizontal {
+    background: qlineargradient(x1: 0, y1: 0.5, x2: 1, y2: 0.5, stop: 0 rgb(126,7,169), stop: 1 rgb(255,214,1));
+}
+QMessageBox{
+    background:#1d1f21;
+}
+
+QMessageBox QLabel {
+    qproperty-alignment:AlignLeft;
 }

@@ -12,38 +12,38 @@ from data.parameters import TIME_CONNECT
 class PortWindow(QtWidgets.QMainWindow):
     selectPort = None
 
-    def __init__(self, parent):
+    def __init__(self, window):
         super().__init__()
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.parent = parent
+        self.window = window
+        self.language = self.window.language
         self.ui.port.addItems(serial_ports())
         self.ui.speed.addItems(AVAILABLE_SPEED)
         self.ui.connect.clicked.connect(self.connect)
         self.ui.progressBar.setValue(0)
         self.ui.OK.clicked.connect(self.OK)
         self.ui.Cancel.clicked.connect(self.Cancel)
+        self.ui.lConnect.setText("Not connected port")
         self.loadStyleSheets()
-        self.setLanguage()
+
+        self.ui.retranslateUi(self)
 
     def loadStyleSheets(self):
-        style = "static/style/style.css"
+        style = self.window.st.load()
         with open(style, "r") as f:
             self.setStyleSheet(f.read())
-
-    def setLanguage(self):
-        self.ui.connect.setText(self.parent.language.words.CONNECT)
-        self.ui.Cancel.setText(self.parent.language.words.CANCEL)
-        self.ui.lPort.setText(self.parent.language.words.PORTS)
-        self.ui.lSpeed.setText(self.parent.language.words.SPEEDS)
 
     def connect(self):
         try:
             self.selectPort = serial.Serial(self.ui.port.currentText(), int(self.ui.speed.currentText()))
             self.runBar()
+            self.ui.lConnect.setText("Success connect")
         except Exception as e:
-            print(e)
+            self.ui.lConnect.setScaledContents(True)
+            self.ui.lConnect.setWordWrap(True)
+            self.ui.lConnect.setText(str(e))
 
     def runBar(self):
         self.ui.OK.setEnabled(False)
@@ -54,7 +54,7 @@ class PortWindow(QtWidgets.QMainWindow):
 
     def OK(self):
         if self.selectPort:
-            self.parent.setPort(self.selectPort)
+            self.window.logic.setPort(self.selectPort)
         self.close()
 
     def Cancel(self):

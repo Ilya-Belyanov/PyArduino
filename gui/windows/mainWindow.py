@@ -1,12 +1,13 @@
-from PyQt5 import QtWidgets
-from PyQt5.QtCore import QBasicTimer
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import QBasicTimer
+from PyQt5 import QtWidgets
 
 from data.command import Command
 from .portWindow import PortWindow
 from src.obj.mainLogic import MainLogic
 from data.parameters import FPS, FPS_TEMP
 from static.language.language import Language
+from static.style.style import Style
 from ..ui.ui_generated.MainWindow import Ui_MainWindow
 
 
@@ -17,22 +18,28 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.logic = MainLogic(self, self.ui)
-
-        self.language = Language()
         self.portWindow = None
+        self.language = Language(self)
+        self.st = Style(self)
+        self.logic = MainLogic(self)
 
         self.ui.actionConnect_port.triggered.connect(self.showPortWindow)
         self.ui.actionRu_2.triggered.connect(self.language.setRu)
         self.ui.actionEng.triggered.connect(self.language.setEng)
+        self.ui.actionPurple.triggered.connect(self.st.setPurpleStyle)
+        self.ui.actionBW.triggered.connect(self.st.setBWStyle)
         self.ui.actionClose_port.triggered.connect(self.logic.closePort)
-        self.ui.actionParameters_port.triggered.connect(lambda: QMessageBox.about(self, "Title", "Message"))
+        self.ui.actionParameters_port.triggered.connect(lambda:
+                                                        QMessageBox.about(self, "Parameters of port",
+                                                                          self.logic.parametersPort()))
 
-        self.ui.bDistance.clicked.connect(lambda: self.logic.changeBool(Command.DISTANT_SENSOR_READ, self.writeDistance))
-        self.ui.bLine.clicked.connect(lambda: self.logic.changeBool(Command.LINE_SENSOR_READ, self.writeLine))
+        self.ui.bDistance.clicked.connect(lambda:
+                                          self.logic.changeBool(Command.DISTANT_SENSOR_READ, self.logic.clearDistance))
+        self.ui.bLine.clicked.connect(lambda: self.logic.changeBool(Command.LINE_SENSOR_READ, self.logic.writeLine))
         self.ui.bTemperature.clicked.connect(lambda:
-                                             self.logic.changeBool(Command.TEMP_SENSOR_READ, self.writeTemperature))
-        self.ui.bLight.clicked.connect(lambda: self.logic.changeBool(Command.LIGHT_SENSOR_READ, self.writeLight))
+                                             self.logic.changeBool(Command.TEMP_SENSOR_READ,
+                                                                   self.logic.writeTemperature))
+        self.ui.bLight.clicked.connect(lambda: self.logic.changeBool(Command.LIGHT_SENSOR_READ, self.logic.writeLight))
 
         self.ui.bLaser.clicked.connect(self.logic.checkLaser)
         self.ui.bClear.clicked.connect(self.logic.clearRGB)
@@ -44,49 +51,38 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.sB.setRange(0, 255)
         self.ui.sB.valueChanged[int].connect(lambda b: self.logic.changeColor(Command.B, b))
 
+        self.ui.retranslateUi(self)
+
+        self.groupAction()
+
         self.timer = QBasicTimer()
         self.timerTemp = QBasicTimer()
         self.timeStart()
 
-        self.loadStyleSheets()
-        self.setLanguage()
-
         self.logic.setStartWindowWithoutPort()
 
-    def loadStyleSheets(self):
-        style = "static/style/style.css"
+    def loadStyleSheets(self, style):
         with open(style, "r") as f:
             self.setStyleSheet(f.read())
+        if self.portWindow:
+            self.portWindow.loadStyleSheets()
 
-    def setLanguage(self):
-        self.setWindowTitle(self.language.words.TITLE)
+    def groupAction(self):
+        self.ui.actionEng.setCheckable(True)
+        self.ui.actionRu_2.setCheckable(True)
+        self.ui.actionRu_2.setChecked(self.language.load() == self.language.RU)
+        self.ui.actionEng.setChecked(self.language.load() == self.language.ENG)
+        self.actionGroup = QtWidgets.QActionGroup(self)
+        self.actionGroup.addAction(self.ui.actionEng)
+        self.actionGroup.addAction(self.ui.actionRu_2)
 
-        self.ui.menuPort.setTitle(self.language.words.PORT)
-        self.ui.actionParameters_port.setText(self.language.words.PARAMETERS_PORT)
-        self.ui.actionConnect_port.setText(self.language.words.CONNECT_PORT)
-        self.ui.actionClose_port.setText(self.language.words.CLOSE_PORT)
-
-        self.ui.menuSettings.setTitle(self.language.words.SETTINGS)
-        self.ui.menuLanguages.setTitle(self.language.words.LANGUAGE)
-        self.ui.actionRu_2.setText(self.language.words.RU)
-        self.ui.actionEng.setText(self.language.words.ENG)
-        self.ui.actionStyles.setText(self.language.words.STYLES)
-
-        self.ui.bDistance.setText(self.language.words.OFF)
-        self.ui.groupBox.setTitle(self.language.words.DISTANT_SENSOR)
-
-        self.ui.bLine.setText(self.language.words.OFF)
-        self.ui.groupBox_2.setTitle(self.language.words.LINE_SENSOR)
-
-        self.ui.bTemperature.setText(self.language.words.OFF)
-        self.ui.groupBox_3.setTitle(self.language.words.TEMP_SENSOR)
-
-        self.ui.bLight.setText(self.language.words.OFF)
-        self.ui.groupBox_5.setTitle(self.language.words.LIGHT_SENSOR)
-
-        self.ui.bClear.setText(self.language.words.CLEAR)
-
-        self.ui.groupBox_6.setTitle(self.language.words.LASER)
+        self.ui.actionPurple.setCheckable(True)
+        self.ui.actionPurple.setChecked(self.st.load() == self.st.PURPLE)
+        self.ui.actionBW.setCheckable(True)
+        self.ui.actionBW.setChecked(self.st.load() == self.st.BW)
+        self.actionGroup2 = QtWidgets.QActionGroup(self)
+        self.actionGroup2.addAction(self.ui.actionPurple)
+        self.actionGroup2.addAction(self.ui.actionBW)
 
     def showPortWindow(self):
         self.portWindow = PortWindow(self)
@@ -99,12 +95,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def timerEvent(self, event):
         if event.timerId() == self.timer.timerId():
-            self.logic.analyzer.readDistance()
-            self.logic.analyzer.readLine()
-            self.logic.analyzer.readLight()
+            self.logic.reader.readDistance()
+            self.logic.reader.readLine()
+            self.logic.reader.readLight()
 
         if event.timerId() == self.timerTemp.timerId():
-            self.logic.analyzer.readTemperature()
+            self.logic.reader.readTemperature()
 
     def timeStop(self):
         self.timer.stop()

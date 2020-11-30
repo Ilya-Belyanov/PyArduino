@@ -18,6 +18,16 @@
 #define G 10
 #define B 9
 
+#define FASTADC 1
+
+// defines for setting and clearing register bits
+#ifndef cbi
+#define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
+#endif
+#ifndef sbi
+#define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+#endif
+
 int colorR, colorG, colorB;
 int distance_value;
 
@@ -31,9 +41,19 @@ DallasTemperature temp_sensors(&temperature);
 //For reading command 
 String command;
 char chr;
-  
+
+
+int start ;
+
 void setup() 
 {
+  #if FASTADC
+  // set prescale to 16
+  sbi(ADCSRA,ADPS2) ;
+  cbi(ADCSRA,ADPS1) ;
+  cbi(ADCSRA,ADPS0) ;
+  #endif
+  
   Serial.begin(115200);
   
   temp_sensors.begin();
@@ -56,13 +76,13 @@ void loop()
     //Read sensors
     if (command[0] == 'i')
       Serial.println(analogRead(SENSOR_LIGHT));
-      
+
     else if (command[0] == 'l')
       Serial.println(analogRead(SENSOR_LINE));
 
     else if (command[0] == 'd')
     { distance_value = distant.read();
-      distance_analysis(distance_value);
+      //distance_analysis(distance_value);
       Serial.println(distance_value);
     }
       
@@ -80,8 +100,12 @@ void loop()
         digitalWrite(LASER, HIGH);
     }
     else if (command[0] == 's')
+    {
+      if (command[1] == '0')
         digitalWrite(LED_DISTANCE, LOW);
-      
+      else
+        digitalWrite(LED_DISTANCE, HIGH);
+    }      
     else if (command[0] == 'r')
     { 
       colorR = command.substring(1, command.length() - 1).toInt();
@@ -111,6 +135,8 @@ void checkCommand()
     { 
       chr = Serial.read();
       command.concat(chr);
+      if (chr == '\n')
+        break;
     }
 }
 

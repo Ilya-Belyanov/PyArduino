@@ -1,29 +1,30 @@
 from data.command import Command
-from src.obj.analyzer import Analyzer
+from src.obj.reader import Reader
 from src.obj.commander import Commander
 
 
 class MainLogic:
-    def __init__(self, window, ui=None):
-        self.window = window
-        self.ui = ui
 
+    def __init__(self, window):
+        self.window = window
+        self.ui = window.ui
+        self.language = window.language
         self.commander = Commander(self.window)
-        self.analyzer = Analyzer(self)
+        self.reader = Reader(self, self.window)
 
     def setStartWindow(self):
         self.clearRGB()
-        self.writeDistance()
+        self.clearDistance()
         self.writeLine()
         self.writeLight()
         self.writeTemperature()
-        self.ui.bLaser.setText(self.window.language.words.ON)
-        self.commander.LASER = False
+        self.ui.bLaser.setText(self.language.translate(self.window.objectName(), "On"))
+        self.commander.reload()
 
     def setStartWindowWithoutPort(self):
+        self.window.timeStop()
         self.setStartWindow()
         self.ui.bLaser.setEnabled(False)
-        self.window.timeStop()
 
     def setStartWindowWithPort(self):
         self.setStartWindow()
@@ -31,14 +32,21 @@ class MainLogic:
         self.window.timeStart()
 
     def setPort(self, port):
-        self.analyzer.setPort(port)
+        self.reader.setPort(port)
         self.commander.setPort(port)
         self.setStartWindowWithPort()
 
     def closePort(self):
         self.setStartWindowWithoutPort()
         self.commander.closePort()
-        self.analyzer.adapter.closePort()
+        self.reader.adapter.closePort()
+
+    def parametersPort(self):
+        dictParameters = self.reader.adapter.parameters()
+        listP = ''
+        for key in dictParameters.keys():
+            listP += '{}: {}\n'.format(key, dictParameters[key])
+        return listP
 
     def clearRGB(self):
         self.ui.sR.setValue(0)
@@ -54,22 +62,34 @@ class MainLogic:
     def checkLaser(self):
         self.commander.writeLaser()
         if self.commander.LASER:
-            self.ui.bLaser.setText(self.window.language.words.OFF)
+            self.ui.bLaser.setText(self.language.translate(self.window.objectName(), "Off"))
         else:
-            self.ui.bLaser.setText(self.window.language.words.ON)
+            self.ui.bLaser.setText(self.language.translate(self.window.objectName(), "On"))
 
     def changeBool(self, command, setStart):
-        self.analyzer.READ[command] = not self.analyzer.READ[command]
-        if self.analyzer.READ[command]:
-            self.window.sender().setText(self.window.language.words.OFF)
+        self.reader.READ[command] = not self.reader.READ[command]
+        if self.reader.READ[command]:
+            self.window.sender().setText(self.language.translate(self.window.objectName(), "Off"))
         else:
-            self.window.sender().setText(self.window.language.words.ON)
+            self.window.sender().setText(self.language.translate(self.window.objectName(), "On"))
         setStart()
 
     def writeDistance(self, distance: int = 0):
         self.ui.lcdDistance.display(distance)
-        if not self.analyzer.READ[Command.DISTANT_SENSOR_READ]:
+        self.analyzeDistance(distance)
+
+    def clearDistance(self):
+        self.ui.lcdDistance.display(0)
+        self.commander.ledLow()
+        self.commander.LED_DISTANCE = False
+
+    def analyzeDistance(self, distance):
+        if distance > 10 and self.commander.LED_DISTANCE:
             self.commander.ledLow()
+            self.commander.LED_DISTANCE = False
+        elif distance < 10 and not self.commander.LED_DISTANCE:
+            self.commander.ledHigh()
+            self.commander.LED_DISTANCE = True
 
     def writeLine(self, var: int = 0, color: str = " "):
         self.ui.lcdLine.display(var)

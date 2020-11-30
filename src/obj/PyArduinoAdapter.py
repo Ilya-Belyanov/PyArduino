@@ -8,6 +8,11 @@ class PyArdAdapter:
             self.port.close()
             self.port = None
 
+    def parameters(self) -> dict:
+        if self.port:
+            return self.port.getSettingsDict()
+        return {None: None}
+
     def do(self, command):
         if self.port:
             self.port.write(command)

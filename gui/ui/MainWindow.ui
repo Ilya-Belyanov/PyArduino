@@ -15,6 +15,93 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0" rowspan="2">
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Distance sensor</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLCDNumber" name="lcdDistance">
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>100</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="lDistance">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>50</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>см</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPushButton" name="bDistance">
+         <property name="text">
+          <string>Off</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QGroupBox" name="groupBox_6">
+      <property name="title">
+       <string>Laser</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QPushButton" name="bLaser">
+         <property name="text">
+          <string>On</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QGroupBox" name="groupBox_3">
+      <property name="title">
+       <string>Temperature sensor</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QLCDNumber" name="lcdTemperature"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="bTemperature">
+         <property name="text">
+          <string>Off</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
     <item row="1" column="2" rowspan="4">
      <widget class="QGroupBox" name="groupBox_4">
       <property name="title">
@@ -120,84 +207,6 @@
       </layout>
      </widget>
     </item>
-    <item row="0" column="1" rowspan="5">
-     <widget class="Line" name="line">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0" rowspan="2">
-     <widget class="QGroupBox" name="groupBox">
-      <property name="title">
-       <string>Distance sensor</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QLCDNumber" name="lcdDistance">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>100</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="lDistance">
-           <property name="maximumSize">
-            <size>
-             <width>50</width>
-             <height>50</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>см</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QPushButton" name="bDistance">
-         <property name="text">
-          <string>Off</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QGroupBox" name="groupBox_3">
-      <property name="title">
-       <string>Temperature sensor</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QLCDNumber" name="lcdTemperature"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="bTemperature">
-         <property name="text">
-          <string>Off</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
     <item row="0" column="0">
      <widget class="QGroupBox" name="groupBox_5">
       <property name="title">
@@ -211,22 +220,6 @@
         <widget class="QPushButton" name="bLight">
          <property name="text">
           <string>Off</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QGroupBox" name="groupBox_6">
-      <property name="title">
-       <string>Laser</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_6">
-       <item>
-        <widget class="QPushButton" name="bLaser">
-         <property name="text">
-          <string>On</string>
          </property>
         </widget>
        </item>
@@ -262,6 +255,13 @@
       </layout>
      </widget>
     </item>
+    <item row="0" column="1" rowspan="5">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -284,8 +284,15 @@
      <addaction name="actionRu_2"/>
      <addaction name="actionEng"/>
     </widget>
+    <widget class="QMenu" name="menuStyles">
+     <property name="title">
+      <string>Styles</string>
+     </property>
+     <addaction name="actionPurple"/>
+     <addaction name="actionBW"/>
+    </widget>
     <addaction name="menuLanguages"/>
-    <addaction name="actionStyles"/>
+    <addaction name="menuStyles"/>
    </widget>
    <widget class="QMenu" name="menuPort">
     <property name="title">
@@ -319,11 +326,6 @@
     <string>Eng</string>
    </property>
   </action>
-  <action name="actionStyles">
-   <property name="text">
-    <string>Styles</string>
-   </property>
-  </action>
   <action name="actionClose_port">
    <property name="text">
     <string>Close port</string>
@@ -332,6 +334,16 @@
   <action name="actionParameters_port">
    <property name="text">
     <string>Parameters port</string>
+   </property>
+  </action>
+  <action name="actionPurple">
+   <property name="text">
+    <string>Purple</string>
+   </property>
+  </action>
+  <action name="actionBW">
+   <property name="text">
+    <string>BW</string>
    </property>
   </action>
  </widget>

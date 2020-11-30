@@ -14,6 +14,7 @@ class Command:
     LASER_HIGH = b'z1\n'
     LASER_LOW = b'z0\n'
 
-    LED_LOW = b's\n'
+    LED_LOW = b's0\n'
+    LED_HIGH = b's1\n'
 
 
